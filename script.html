@@ -75,6 +75,9 @@
         });
 
         $( ".dropItem" ).droppable({
+        
+          hoverClass: "highlight",
+
          drop: function( event, ui ) {
              $(this).text(""); // clear out current variable
              $(this).append("\\( ( \\)");
