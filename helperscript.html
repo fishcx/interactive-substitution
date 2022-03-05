@@ -1,0 +1,98 @@
+<script>
+// removes all double signs
+    function doublesigns(string){
+
+       return string.replaceAll("-+", "-").replaceAll("- +", "-").replaceAll("+ -", "-").replaceAll("- -", "+").replaceAll("+-", "-").replaceAll("-- ", "+");
+    }
+String.prototype.replaceAll = function(searchStr, replaceStr) {
+	var str = this;
+
+    // no match exists in string?
+    if(str.indexOf(searchStr) === -1) {
+        // return string
+        return str;
+    }
+
+    // replace and remove first match, and do another recursirve search/replace
+    return (str.replace(searchStr, replaceStr)).replaceAll(searchStr, replaceStr);
+}
+      // random integer between and including min and max
+	function random(min, max) {
+
+         return Math.floor(Math.random() * (max - min + 1) ) + min;
+    } 
+    
+    // random non-zero integer bewteen min and max
+    function non_zero_random(min, max) {
+         
+         var output;  
+         do{output = random(min,max);} while (output === 0);
+         return output;
+    } 
+    
+       
+       function gcd (a, b) {
+            if ( ! b) {
+           return a;
+         }
+
+           return gcd(b, a % b);
+       };
+    
+    // simplify fraction
+    function simplifyFrac(num, denom){
+       
+       // if integer, return integer
+       if((num % denom) === 0){
+       
+         return num/denom;
+         
+       }
+       // otherwise, return fraction in simplest form
+       else{
+          var output = "";
+           if((num/denom) < 0){ output = "-"; }
+            var g = gcd(num,denom);
+            output += "\\frac{"+Math.abs(num/g)+"}{"+Math.abs(denom/g)+"}";
+            return output;
+        }
+    }
+
+
+// simplifies expressions by removing 0x and +0
+    function simplify(string){
+         var str = doublesigns(string).replace(/\s+/g, ''); // remove whitespace -- need for + 0 instead of +0
+         var latex = false;
+         
+         // if it is encased in latex code, remove that first and add it back in at the end
+         if(str.substring(0,2) == "\\("){
+            
+            latex = true;
+            str = str.substring(2,str.length-2);  //these locations were found by trial and error. The double \\ becomes \ at some point which is strange...
+         
+         }
+         
+         // remove 0 variable terms - there shouldn't be any...
+         str = str.replace(/(\+|\-)*(\D|^)0([a-z]|[A-Z])(\^\{\d+\}|\^\d|\^\{\-\d+\})?/g,"");       
+         
+         // remove any +0 or -0 constants without removing =0
+         str = str.replace(/(\+|\-)0/g,"");
+         
+         // remove leading + sign if there is one
+         if(str.charAt(0) == "+"){ 
+
+             str = str.substring(1,str.length);
+            
+         }
+        
+
+         // add back in the latex brackets if they were there to begin with
+         if(latex){
+         
+           str = "\\("+str+"\\)";
+         
+         }
+         
+         return str;
+    }
+</script>
