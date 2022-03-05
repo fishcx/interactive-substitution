@@ -1,33 +1,6 @@
 <script>
-function allowDrop(ev) {
-    ev.preventDefault();
-}
-
-function drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
-}
-
-function drop(ev) {
-    ev.preventDefault();
-    var data = ev.dataTransfer.getData("text");
-    
-    // remove letter that is being replaced
-    ev.target.removeChild(ev.target.childNodes[0]);
-    const beforeP = document.createTextNode("\\((\\)");
-    const afterP = document.createTextNode("\\()\\)");
-
-    // use copy to keep the original item where it is
-    var nodeCopy = document.getElementById(data).cloneNode(true);
-    ev.target.appendChild(beforeP);
-    ev.target.appendChild(nodeCopy);
-    ev.target.appendChild(afterP);
-
-    // reformat the katex for the added in parenthesis
-    renderMathInElement(document.body);
-}
-
 	$(document).ready(function() {
-    
+
     $('.changeItem').change(function(){
         $('#generate').click();
     });
@@ -95,6 +68,21 @@ function drop(ev) {
        }
                     
        $("#answer").html(answer);
+       $( ".dragItem" ).draggable({
+          revert: 'true',
+          scroll: false,
+          helper: 'clone'
+        });
+
+        $( ".dropItem" ).droppable({
+         drop: function( event, ui ) {
+             $(this).text(""); // clear out current variable
+             $(this).append("\\( ( \\)");
+             $(this).append(ui.draggable);
+             $(this).append("\\( ) \\)");
+            renderMathInElement(document.body);
+         }
+       });
        renderMathInElement(document.body);
        
        }
@@ -108,7 +96,7 @@ function drop(ev) {
           var end = 8;
 
           if(!one){ end = 12;}
-          //switch(6){
+          
           switch(random(0,end)){
               
               case 0: case 1: case 2:  
@@ -117,8 +105,8 @@ function drop(ev) {
               do{d = random(2,5);} while(-1*a==d*b);
               c = a*x+b*y;
               e = y-(d*x);
-              this.equation1 = "\\("+simplify(a+"x + "+b)+"\\)<span id='drop1' ondrop='drop(event)' ondragover='allowDrop(event)'>\\(y\\)</span> \\(= "+c+"\\)"; 
-              this.equation2="\\(y = \\)<span id='drag1' class='item' draggable='true' ondragstart='drag(event)'>\\("+simplify(doublesigns(d+"x + "+e))+"\\)</span>";  
+              this.equation1 = "\\("+simplify(a+"x + "+b)+"\\)<span id='drop1' class='dropItem'>\\(y\\)</span> \\(= "+c+"\\)"; 
+              this.equation2="\\(y = \\)<span id='drag1' class='dragItem'>\\("+simplify(doublesigns(d+"x + "+e))+"\\)</span>";  
               break;
               
               case 3: case 4: case 5: 
@@ -128,8 +116,8 @@ function drop(ev) {
               c = a*x+b*y;
               e = x-(d*y); 
               
-              this.equation1="\\(x = \\)<span id='drag2' class='item' draggable='true' ondragstart='drag(event)'>\\("+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
-              this.equation2 = "\\("+a+"\\)<span id='drop2' ondrop='drop(event)' ondragover='allowDrop(event)'>\\(x\\)</span>\\("+doublesigns(" + "+b+"y ")+"= "+c+"\\)"; 
+              this.equation1="\\(x = \\)<span id='drag2' class='dragItem'>\\("+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
+              this.equation2 = "\\("+a+"\\)<span id='drop2'  class='dropItem'>\\(x\\)</span>\\("+doublesigns(" + "+b+"y ")+"= "+c+"\\)"; 
               break;
               
               case 6: case 7: case 8: 
@@ -140,8 +128,8 @@ function drop(ev) {
               y = a*x+b;
               this.answer =  "\\(("+x+", "+y+")\\)";
               d = (y)-(c*x);
-              this.equation1 = "<span id='drop3' ondrop='drop(event)' ondragover='allowDrop(event)'>\\(y\\)</span>\\( = \\)<span class='item' id='drag3'  draggable='true' ondragstart='drag(event)'>\\("+simplify(doublesigns(a+"x + "+b))+"\\)</span>"; 
-              this.equation2 = "<span id='drop4' ondrop='drop(event)' ondragover='allowDrop(event)'>\\(y\\)</span> \\( = \\) <span class='item' id='drag4'  draggable='true' ondragstart='drag(event)'>\\("+simplify(doublesigns(c+"x + "+d))+"\\)</span>";
+              this.equation1 = "<span id='drop3' class='dropItem'>\\(y\\)</span>\\( = \\)<span id='drag3' class='dragItem'>\\("+simplify(doublesigns(a+"x + "+b))+"\\)</span>"; 
+              this.equation2 = "<span id='drop4' class='dropItem'>\\(y\\)</span> \\( = \\) <span id='drag4' class='dragItem'>\\("+simplify(doublesigns(c+"x + "+d))+"\\)</span>";
               break;
               
               // infinite solutions
@@ -153,7 +141,8 @@ function drop(ev) {
               c = a*x+b*y;
               e = y-(d*x);
               this.answer = "\\(\\infty\\) solutions, equivalent lines";
-              this.equation1 = a+"x + "+b+"y = "+c; this.equation2="y = "+d+"x + "+e; 
+              this.equation1 = "\\("+simplify(a+"x + "+b)+"\\)<span id='drop5' class='dropItem'>\\(y\\)</span> \\(= "+c+"\\)"; 
+              this.equation2="\\(y = \\)<span id='drag5' class='dragItem'>\\("+simplify(doublesigns(d+"x + "+e))+"\\)</span>"; 
               break;
               
               // infinite solutions
@@ -164,7 +153,8 @@ function drop(ev) {
               e = non_zero_random(-10,10);
               c = e*a;
               this.answer = "\\(\\infty\\) solutions, equivalent lines";
-              this.equation2 = a+"x + "+b+"y = "+c; this.equation1="x = "+d+"y + "+e; 
+              this.equation1="\\(x = \\)<span id='drag6' class='dragItem'>\\("+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
+              this.equation2 = "\\("+a+"\\)<span id='drop6'  class='dropItem'>\\(x\\)</span>\\("+doublesigns(" + "+b+"y ")+"= "+c+"\\)"; 
               break;
               
               // no solutions
@@ -175,7 +165,8 @@ function drop(ev) {
               c = a*x+b*y;
               do{e = non_zero_random(-20,20);} while(e == y-(d*x));
               this.answer = "No solutions, parallel lines";
-              this.equation1 = a+"x + "+b+"y = "+c; this.equation2="y = "+d+"x + "+e; 
+              this.equation1 = "\\("+simplify(a+"x + "+b)+"\\)<span id='drop7' class='dropItem'>\\(y\\)</span> \\(= "+c+"\\)"; 
+              this.equation2="\\(y = \\)<span id='drag7' class='dragItem'>\\("+simplify(doublesigns(d+"x + "+e))+"\\)</span>"; 
               break;
               
               // no solutions
@@ -186,7 +177,8 @@ function drop(ev) {
               e = non_zero_random(-10,10);
               do{c = non_zero_random(-20,20);} while(c == e*a);
               this.answer = "No solutions, parallel lines";
-              this.equation2 = a+"x + "+b+"y = "+c; this.equation1="x = "+d+"y + "+e; 
+              this.equation1="\\(x = \\)<span id='drag8' class='dragItem'>\\("+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
+              this.equation2 = "\\("+a+"\\)<span id='drop8'  class='dropItem'>\\(x\\)</span>\\("+doublesigns(" + "+b+"y ")+"= "+c+"\\)"; 
               break;
 
            }
