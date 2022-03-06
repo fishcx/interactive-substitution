@@ -74,6 +74,13 @@
           helper: 'clone'
         });
 
+        var activeExpId = "";
+        $(".dragItem").on("click",function(){
+            activeExpId = $(this).attr('id');
+            $(".dragItem").removeClass("active");
+            $(this).addClass("active");
+        });
+
         $( ".dropItem" ).droppable({
           tolerance: "pointer",
           hoverClass: "highlight",
@@ -86,6 +93,18 @@
             renderMathInElement(document.body);
          }
        });
+
+       $( ".dropItem" ).on("click",function(){
+         if(activeExpId != ""){
+          $(this).text(""); // clear out current variable
+          $(this).append("\\( ( \\)");
+          $(this).append($("#"+activeExpId).clone());
+          $(this).append("\\( ) \\)");
+          renderMathInElement(document.body);
+          $(".dragItem").removeClass("active");
+         }
+       });
+
        renderMathInElement(document.body);
        
        }
