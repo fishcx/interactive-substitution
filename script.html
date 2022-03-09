@@ -91,6 +91,7 @@
              $(this).append($(ui.draggable).clone());
              $(this).append("\\( ) \\)");
             renderMathInElement(document.body);
+            $(".dragItem").removeClass("active");
          }
        });
 
