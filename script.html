@@ -16,6 +16,7 @@
        
     var testing = false;
     var bothYEquals = false;
+    var currentVariable = "";
 
     $('#generate').click(function(){
         // reset when generated
@@ -60,7 +61,7 @@
        $("#answer").html("");
        
        substitution(one);
-
+        
        // alternate the order of the equations for more variability
        switch(random(0,1)){
 
@@ -68,7 +69,11 @@
           case 1: $("#generatedEquation").html(equation2+"<br>"+equation1); break;
 
        }
-                    
+        $('#undo').click(function(){
+          $(".dropItem").text("\\("+currentVariable+"\\)");
+          renderMathInElement(document.body);
+        });
+
        $("#answer").html(answer);
        $( ".dragItem" ).draggable({
           revert: 'true',
@@ -126,6 +131,7 @@
               
               case 0: case 1: case 2:  
               bothYEquals = false;
+              currentVariable = "y";
               a = non_zero_random(-5,5);
               b = non_zero_random(-5,5);
               do{d = random(2,5);} while(-1*a==d*b);
@@ -137,6 +143,7 @@
               
               case 3: case 4: case 5: 
               bothYEquals = false;
+              currentVariable = "x";
               a = non_zero_random(-5,5);
               b = non_zero_random(-5,5);
               do{d = random(2,5); } while((-1*a*d)==b);
@@ -149,6 +156,7 @@
               
               case 6: case 7: case 8: 
               bothYEquals = true;
+              currentVariable = "y";
               a = non_zero_random(-8, 8);
               b = non_zero_random(-8, 8);
               // makes sure there is one unique solution
@@ -163,6 +171,7 @@
               // infinite solutions
               case 9:
               bothYEquals = false;
+              currentVariable = "y";
               d = non_zero_random(-5,5);
               a = non_zero_random(-5,5);
               b = non_zero_random(-5,5);
@@ -177,6 +186,7 @@
               // infinite solutions
               case 10:
               bothYEquals = false;
+              currentVariable = "x";
               d = non_zero_random(-5,5);
               a = non_zero_random(-5,5);
               b = -1*d*a;
@@ -191,6 +201,7 @@
               // no solutions
               case 11:
               bothYEquals = false;
+              currentVariable = "y";
               d = non_zero_random(-5,5);
               b = non_zero_random(-5,5);
               a = -1*d*b;
@@ -204,6 +215,7 @@
               // no solutions
               case 12:
               bothYEquals = false;
+              currentVariable = "x";
               d = non_zero_random(-5,5);
               a = non_zero_random(-5,5);
               b = -1*d*a;
