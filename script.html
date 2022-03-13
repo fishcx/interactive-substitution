@@ -121,7 +121,7 @@
           var end = 8;
 
           if(!one){ end = 12;}
-          //switch(3){
+          //switch(12){
           switch(random(0,end)){
               
               case 0: case 1: case 2:  
@@ -142,9 +142,9 @@
               do{d = random(2,5); } while((-1*a*d)==b);
               c = a*x+b*y;
               e = x-(d*y); 
-              
               this.equation1="\\(x=~\\)<span id='drag2' class='dragItem'>\\("+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
               this.equation2 = "\\("+a+"\\)<span id='drop2'  class='dropItem'>\\(x\\)</span>\\("+doublesigns(" + "+b+"y ")+"= "+c+"\\)"; 
+              this.equation2 = this.equation2.replace("+","~+~").replace("( -","(~-~");
               break;
               
               case 6: case 7: case 8: 
@@ -185,6 +185,7 @@
               this.answer = "\\(\\infty\\) solutions, equivalent lines";
               this.equation1="\\(x=~\\)<span id='drag6' class='dragItem'>\\("+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
               this.equation2 = "\\("+a+"\\)<span id='drop6'  class='dropItem'>\\(x\\)</span>\\("+doublesigns(" + "+b+"y ")+"= "+c+"\\)"; 
+              this.equation2 = this.equation2.replace("+","~+~").replace("( -","(~-~");
               break;
               
               // no solutions
@@ -211,6 +212,7 @@
               this.answer = "No solutions, parallel lines";
               this.equation1="\\(x=~\\)<span id='drag8' class='dragItem'>\\("+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
               this.equation2 = "\\("+a+"\\)<span id='drop8'  class='dropItem'>\\(x\\)</span>\\("+doublesigns(" + "+b+"y ")+"= "+c+"\\)"; 
+              this.equation2 = this.equation2.replace("+","~+~").replace("( -","(~-~");
               break;
 
            }
