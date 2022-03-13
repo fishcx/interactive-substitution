@@ -15,6 +15,8 @@
     });
        
     var testing = false;
+    var bothYEquals = false;
+
     $('#generate').click(function(){
         // reset when generated
         $("#show-answer").val("Show Answer");
@@ -87,9 +89,9 @@
 
          drop: function( event, ui ) {
              $(this).text(""); // clear out current variable
-             $(this).append("\\( ( \\)");
+             if(!bothYEquals){ $(this).append("\\( ( \\)"); }
              $(this).append($(ui.draggable).clone());
-             $(this).append("\\( ) \\)");
+             if(!bothYEquals){ $(this).append("\\( ) \\)"); }
             renderMathInElement(document.body);
             $(".dragItem").removeClass("active");
          }
@@ -98,9 +100,9 @@
        $( ".dropItem" ).on("click",function(){
          if(activeExpId != ""){
           $(this).text(""); // clear out current variable
-          $(this).append("\\( ( \\)");
+          if(!bothYEquals){ $(this).append("\\( ( \\)"); }
           $(this).append($("#"+activeExpId).clone());
-          $(this).append("\\( ) \\)");
+          if(!bothYEquals){ $(this).append("\\( ) \\)"); }
           renderMathInElement(document.body);
           $(".dragItem").removeClass("active");
          }
@@ -110,6 +112,20 @@
        
        }
        
+       function wrapVar(origString, varToWrap, idnum, dragItem)
+       {
+          var newStr = "";
+          // drag item
+          if(dragItem){
+            newStr = origString.replace(varToWrap,"");
+          }
+          // drop item
+          else{
+
+          }
+
+       }
+
        function substitution(one){
           
           var a = ""; var b = ""; var c = ""; var d = ""; var e = ""; var f = ""; var g = ""; var y = ""; var x = "";
@@ -119,31 +135,34 @@
           var end = 8;
 
           if(!one){ end = 12;}
-          //switch(6){
+          //switch(3){
           switch(random(0,end)){
               
               case 0: case 1: case 2:  
+              bothYEquals = false;
               a = non_zero_random(-5,5);
               b = non_zero_random(-5,5);
               do{d = random(2,5);} while(-1*a==d*b);
               c = a*x+b*y;
               e = y-(d*x);
               this.equation1 = "\\("+simplify(a+"x + "+b)+"\\)<span id='drop1' class='dropItem'>\\(y\\)</span> \\(= "+c+"\\)"; 
-              this.equation2="\\(y = \\)<span id='drag1' class='dragItem'>\\(~"+simplify(doublesigns(d+"x + "+e))+"\\)</span>";  
+              this.equation2="\\(y=~\\)<span id='drag1' class='dragItem'>\\("+simplify(doublesigns(d+"x + "+e))+"\\)</span>";  
               break;
               
               case 3: case 4: case 5: 
+              bothYEquals = false;
               a = non_zero_random(-5,5);
               b = non_zero_random(-5,5);
               do{d = random(2,5); } while((-1*a*d)==b);
               c = a*x+b*y;
               e = x-(d*y); 
               
-              this.equation1="\\(x = \\)<span id='drag2' class='dragItem'>\\(~"+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
+              this.equation1="\\(x=~\\)<span id='drag2' class='dragItem'>\\("+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
               this.equation2 = "\\("+a+"\\)<span id='drop2'  class='dropItem'>\\(x\\)</span>\\("+doublesigns(" + "+b+"y ")+"= "+c+"\\)"; 
               break;
               
               case 6: case 7: case 8: 
+              bothYEquals = true;
               a = non_zero_random(-8, 8);
               b = non_zero_random(-8, 8);
               // makes sure there is one unique solution
@@ -157,6 +176,7 @@
               
               // infinite solutions
               case 9:
+              bothYEquals = false;
               d = non_zero_random(-5,5);
               a = non_zero_random(-5,5);
               b = non_zero_random(-5,5);
@@ -165,23 +185,25 @@
               e = y-(d*x);
               this.answer = "\\(\\infty\\) solutions, equivalent lines";
               this.equation1 = "\\("+simplify(a+"x + "+b)+"\\)<span id='drop5' class='dropItem'>\\(y\\)</span> \\(= "+c+"\\)"; 
-              this.equation2="\\(y = \\)<span id='drag5' class='dragItem'>\\(~"+simplify(doublesigns(d+"x + "+e))+"\\)</span>"; 
+              this.equation2="\\(y~=~\\)<span id='drag5' class='dragItem'>\\("+simplify(doublesigns(d+"x + "+e))+"\\)</span>"; 
               break;
               
               // infinite solutions
               case 10:
+              bothYEquals = false;
               d = non_zero_random(-5,5);
               a = non_zero_random(-5,5);
               b = -1*d*a;
               e = non_zero_random(-10,10);
               c = e*a;
               this.answer = "\\(\\infty\\) solutions, equivalent lines";
-              this.equation1="\\(x = \\)<span id='drag6' class='dragItem'>\\(~"+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
+              this.equation1="\\(x~=~\\)<span id='drag6' class='dragItem'>\\("+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
               this.equation2 = "\\("+a+"\\)<span id='drop6'  class='dropItem'>\\(x\\)</span>\\("+doublesigns(" + "+b+"y ")+"= "+c+"\\)"; 
               break;
               
               // no solutions
               case 11:
+              bothYEquals = false;
               d = non_zero_random(-5,5);
               b = non_zero_random(-5,5);
               a = -1*d*b;
@@ -189,18 +211,19 @@
               do{e = non_zero_random(-20,20);} while(e == y-(d*x));
               this.answer = "No solutions, parallel lines";
               this.equation1 = "\\("+simplify(a+"x + "+b)+"\\)<span id='drop7' class='dropItem'>\\(y\\)</span> \\(= "+c+"\\)"; 
-              this.equation2="\\(y = \\)<span id='drag7' class='dragItem'>\\(~"+simplify(doublesigns(d+"x + "+e))+"\\)</span>"; 
+              this.equation2="\\(y~=~\\)<span id='drag7' class='dragItem'>\\("+simplify(doublesigns(d+"x + "+e))+"\\)</span>"; 
               break;
               
               // no solutions
               case 12:
+              bothYEquals = false;
               d = non_zero_random(-5,5);
               a = non_zero_random(-5,5);
               b = -1*d*a;
               e = non_zero_random(-10,10);
               do{c = non_zero_random(-20,20);} while(c == e*a);
               this.answer = "No solutions, parallel lines";
-              this.equation1="\\(x = \\)<span id='drag8' class='dragItem'>\\(~"+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
+              this.equation1="\\(x~=~\\)<span id='drag8' class='dragItem'>\\("+simplify(doublesigns(d+"y + "+e))+"\\)</span>";       
               this.equation2 = "\\("+a+"\\)<span id='drop8'  class='dropItem'>\\(x\\)</span>\\("+doublesigns(" + "+b+"y ")+"= "+c+"\\)"; 
               break;
 
