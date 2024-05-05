@@ -1,5 +1,14 @@
 <script>
 	$(document).ready(function() {
+    
+    $('.close').click(function(){
+        $("#message").hide();
+    });
+
+    $("#help").click(function(){
+        if($("#message").is(":visible")){ $("#message").hide();} 
+        else{ $("#message").show(); };
+    });
 
     $('.changeItem').change(function(){
         $('#generate').click();
