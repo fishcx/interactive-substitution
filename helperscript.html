@@ -1,4 +1,44 @@
 <script>
+
+function shuffle(array) {
+       array.sort(() => Math.random() - 0.5);
+       return array;
+    }
+
+ // use this for complicated calculations to format the decimal correctly for floating point errors
+   function formatDec(a){
+   
+     return Math.round(a*10000)/10000;
+   
+   }
+
+   // function to rearrange the pieces of a polynomial
+    function mix(termArray){
+       
+       var output = "";
+       
+       if(termArray.length == 0){
+            
+            output = "0";
+            
+       }
+       else{
+       
+          var terms = shuffle(termArray);
+          
+          output = terms[0];
+          
+          for(var i = 1; i < terms.length; i++){
+              
+              output += " + "+terms[i];
+          
+          }
+          
+       }
+       
+       return output;
+    }
+
 // removes all double signs
 
  String.prototype.replaceLast = function (what, replacement) {

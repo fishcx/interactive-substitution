@@ -28,21 +28,39 @@
     var currentVariable = "";
 
     $('#generate').click(function(){
+        if(!testing){$("#answer").hide(); $("#show-answer").val("Show Answer");}
         // reset when generated
         $("#show-answer").val("Show Answer");
-        
-        if(!testing){$("#answer").hide(); $("#show-answer").val("Show Answer");}
-        
-        // default is only one solution
-        var one = true;
-        
-        // otherwise allow for infinite and no solutions
-        if($("#one-toggle").is(':checked')){   one = false; }
-        
-        generate(one);    
-        
-     });
+        $("#one-toggle-span").hide();
 
+        var type = parseInt($("#type").val());
+
+        switch(type){
+        
+          // substitution
+          case 0:
+           $("#one-toggle-span").show();
+            // default is only one solution
+            var one = true;       
+            // otherwise allow for infinite and no solutions
+            if($("#one-toggle").is(':checked')){   one = false; }
+            generate(one);
+
+            break;
+
+            // Expressions
+            case 1:
+            generateExpression();
+            break;
+
+            // Functions
+            case 2:
+            generateFunc();
+            break; 
+
+        }
+     
+     });
 
     $("#show-answer").click(function(){
        if($("#answer").is(":hidden") ){
@@ -135,7 +153,7 @@
           var end = 8;
 
           if(!one){ end = 12;}
-          //switch(12){
+          
           switch(random(0,end)){
               
               case 0: case 1: case 2:  
@@ -238,4 +256,268 @@
 
            }
        }
+
+       function generateExpression(){
+              
+       this.equation1 = "";
+       this.answer = "";
+       
+       $("#generatedEquation").html("");
+       $("#answer").html("");
+       
+       expression();
+
+        $('#undo').click(function(){
+          $(".dropItem").text("\\("+currentVariable+"\\)");
+          renderMathInElement(document.body);
+        });
+
+       $("#answer").html(answer);
+       $( ".dragItem" ).draggable({
+          revert: 'true',
+          scroll: false,
+          helper: 'clone'
+        });
+
+        var activeExpId = "";
+        $(".dragItem").on("click",function(){
+            activeExpId = $(this).attr('id');
+            $(".dragItem").removeClass("active");
+            $(this).addClass("active");
+        });
+
+        $( ".dropItem" ).droppable({
+          tolerance: "pointer",
+          hoverClass: "highlight",
+
+         drop: function( event, ui ) {
+             $(this).text(""); // clear out current variable
+             if(!bothYEquals){ $(this).append("\\( ( \\)"); }
+             $(this).append($(ui.draggable).clone());
+             if(!bothYEquals){ $(this).append("\\( ) \\)"); }
+            renderMathInElement(document.body);
+            $(".dragItem").removeClass("active");
+         }
+       });
+
+       $( ".dropItem" ).on("click",function(){
+         if(activeExpId != ""){
+          $(this).text(""); // clear out current variable
+          if(!bothYEquals){ $(this).append("\\( ( \\)"); }
+          $(this).append($("#"+activeExpId).clone());
+          if(!bothYEquals){ $(this).append("\\( ) \\)"); }
+          renderMathInElement(document.body);
+          $(".dragItem").removeClass("active");
+         }
+       });
+
+       renderMathInElement(document.body);
+       
+       }
+
+      function generateFunc(){
+              
+       this.equation1 = "";
+       this.equation2 = "";
+       this.answer = "";
+       var a,b,c,d;
+       var variable1 = "xnt".charAt(random(0,2));
+       var funcVar = "fgh".charAt(random(0,2));
+
+       $("#generatedEquation").html("");
+       $("#answer").html("");
+       
+       a = non_zero_random(-9,9);
+       b = non_zero_random(-9,9);
+       c = non_zero_random(-10,10);
+       d = non_zero_random(-10,10);
+       var needParenths = false;
+
+       switch(random(0,2)){
+        
+        // f(3) when linear
+        case 0:
+          needParenths = true;
+          currentVariable = variable1;
+          this.equation1 = `Determine \\(${funcVar}(\\)<span id='drag1' class='dragItem'>\\(${c}\\)</span>\\()~\\)`;       
+          this.equation2 = `\\(${funcVar}\\)<span id='drop1'  class='dropItem'>\\((${variable1})\\)</span>\\(=~${a}\\)<span id='drop2'  class='dropItem'>\\(${variable1}\\)</span>\\(~${doublesigns("+"+b)}\\)`; 
+          this.answer = `\\(${funcVar}(${c})=${a*c+b}\\)`;
+        break;
+        
+        // f(x) = 3 when linear
+        case 1:
+          currentVariable = `${funcVar}(${variable1})`
+          this.equation1 = `Find \\(${variable1}\\) when \\(${funcVar}(${variable1})=~\\)<span id='drag1' class='dragItem'>\\(${a*c+b}\\)</span>`;       
+          this.equation2 = `<span id='drop1' class='dropItem'>\\(${funcVar}(${variable1})\\)</span>\\(~=${a}${variable1}${doublesigns("+"+b)}\\)`; 
+          this.answer = `\\(${variable1}=${c}\\)`;
+        break;
+
+        // f(3) when quadratic
+        case 2:
+          needParenths = true;
+          currentVariable = variable1;
+          this.equation1 = `Determine \\(${funcVar}(\\)<span id='drag1' class='dragItem'>\\(${c}\\)</span>\\()~\\)`;       
+          this.equation2 = `\\(${funcVar}\\)<span id='drop1'  class='dropItem'>\\((${variable1})\\)</span>\\(=~${d}\\)<span id='drop2'  class='dropItem'>\\(${variable1}\\)</span>\\(^2~${doublesigns("+"+a)}\\)<span id='drop1'  class='dropItem'>\\(${variable1}\\)</span>\\(~${doublesigns("+"+b)}\\)`; 
+          this.answer = `\\(${funcVar}(${c})=${d*c**2+a*c+b}\\)`;
+        break;
+       }
+        $("#generatedEquation").html(equation1+"<br>"+equation2);
+
+        $('#undo').click(function(){
+          $(".dropItem").text("\\("+currentVariable+"\\)");
+          renderMathInElement(document.body);
+        });
+
+       $("#answer").html(answer);
+       $( ".dragItem" ).draggable({
+          revert: 'true',
+          scroll: false,
+          helper: 'clone'
+        });
+
+        var activeExpId = "";
+        $(".dragItem").on("click",function(){
+            activeExpId = $(this).attr('id');
+            $(".dragItem").removeClass("active");
+            $(this).addClass("active");
+        });
+
+        $( ".dropItem" ).droppable({
+          tolerance: "pointer",
+          hoverClass: "highlight",
+
+         drop: function( event, ui ) {
+             $(this).text(""); // clear out current variable
+             if(needParenths){ $(this).append("\\( ( \\)"); }
+             $(this).append($(ui.draggable).clone());
+             if(needParenths){ $(this).append("\\( ) \\)"); }
+            renderMathInElement(document.body);
+            $(".dragItem").removeClass("active");
+         }
+       });
+
+       $( ".dropItem" ).on("click",function(){
+         if(activeExpId != ""){
+          $(this).text(""); // clear out current variable
+          if(needParenths){ $(this).append("\\( ( \\)"); }
+          $(this).append($("#"+activeExpId).clone());
+          if(needParenths){ $(this).append("\\( ) \\)"); }
+          renderMathInElement(document.body);
+          $(".dragItem").removeClass("active");
+         }
+       });
+
+       renderMathInElement(document.body);
+       
+       }
+
+
+       function expression(){
+
+           var exp = "", situation = "", ans;
+           
+           a = non_zero_random(-10,10);
+           b = non_zero_random(-10,10);
+           c = random(2,5);
+           
+           var variables = produceVars(3);
+           var var1 = variables[0];
+           var var2 = variables[1];
+           var var3 = variables[2];
+        
+           switch(random(0,7)){
+           
+              case 0:
+              exp = mix([var1+"^2",var2+""+var3]);
+              ans = formatDec(c**2+a*b);
+              situation = "\\("+var1+" = "+c+", "+var2+" = "+a+", \\) and \\("+var3+" = "+b+"\\)";
+              answer = "\\("+ans+"\\)";
+              break;
+              
+              case 1:
+              exp = var3+"("+mix([var1,var2])+")";
+              ans = formatDec((c+a)*b);
+              situation = "\\("+var1+" = "+c+", "+var2+" = "+a+", \\) and \\("+var3+" = "+b+"\\)";
+              answer = "\\("+ans+"\\)";
+              break;
+              
+              case 2:
+              d = random(2,9);
+              exp = mix([d+"("+var1+" + "+var2+")",var3]);
+              ans = formatDec(d*(c+a)+b);
+              situation = "\\("+var1+" = "+c+", "+var2+" = "+a+", \\) and \\("+var3+" = "+b+"\\)";
+              answer = "\\("+ans+"\\)";
+              break;
+              
+              case 3:
+              d = random(2,9);
+              exp = mix([var1+""+var2,d+var3]);
+              ans = formatDec(c*a+d*b);
+              situation = "\\("+var1+" = "+c+", "+var2+" = "+a+", \\) and \\("+var3+" = "+b+"\\)";
+              answer = "\\("+ans+"\\)";
+              break;
+              
+              case 4:
+              d = random(2,5);
+              e = formatDec(d*c*b);
+              exp = "\\cfrac{"+e+var2+"}{"+var1+var3+"}";
+              situation = "\\("+var1+" = "+c+", "+var2+" = "+a+", \\) and \\("+var3+" = "+b+"\\)";
+              answer = "\\("+(d*a)+"\\)";
+              break;
+              
+              case 5:
+              d = non_zero_random(-10,10);
+              a = formatDec(c**2-d*c*b);
+              exp = "\\cfrac{"+var1+"^2-"+var2+"}{"+var1+var3+"}";
+              situation = "\\("+var1+" = "+c+", "+var2+" = "+a+", \\) and \\("+var3+" = "+b+"\\)";
+              answer = "\\("+d+"\\)";
+              break;
+              
+              case 6:
+              d = random(-10,-1);
+              exp = var1+"^2";
+              situation = "\\("+var1+" = "+d+"\\)";
+              a = formatDec(d*d);
+              answer = "\\("+a+"\\)";
+              break  
+              
+              case 7:
+              d = random(-10,-1);
+              exp = b+var1+"^2";
+              situation = "\\("+var1+" = "+d+"\\)";
+              a = formatDec(b*d*d);
+              answer = "\\("+a+"\\)";
+              break 
+           
+           }
+           alert(situation);
+           this.equation1 = situation;
+           this.equation2 = exp;
+           this.answer = ans;
+       }
+
+    // helper function to produce numOfVars num of distinct variables
+    function produceVars(numOfVars){
+        
+        var letterOptions = ["x","y","z","a","b","c","d","f","g","h","j","k","m","n","p","q","r","v","w"];
+        var output = [];
+        var choice;
+        
+        for(var i = 0; i < numOfVars; i++){
+            
+            // keep generating options from the list until a new one is picked
+            do{
+                
+                choice = letterOptions[random(0,letterOptions.length-1)].toString();
+            
+            }
+            while(output.indexOf(choice) !== -1);
+            output.push(choice);
+        
+        }
+        
+        return output;
+    
+    }
+
 </script>

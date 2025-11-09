@@ -24,12 +24,21 @@
 
   <body>
             <div class="alert alert-info infoBox" role="alert" id="message">
-              Drag and drop or click and click to perform algebraic substitution. <a target="_blank" href="https://youtu.be/7w6R_R2p8Q0">Here's a video</a>.<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              Drag and drop or click and click to perform substitution. <a target="_blank" href="https://youtu.be/7w6R_R2p8Q0">Here's a video</a>.<button type="button" class="close" data-dismiss="alert" aria-label="Close">
              <span aria-hidden="true">&times;</span>
              </button>
             </div>
       <div>
-		       <input type="checkbox" class="changeItem" data-toggle="toggle" data-on="Mixed" data-off="One Solution" id="one-toggle" name="one-toggle" data-offstyle="btn btn-main btn-toggle btn-lg" data-onstyle="btn btn-info btn-toggle btn-lg">   
+
+            Type: 
+         <select name="type" id="type" class="changeItem">
+            <option value="0">Systems</option>
+            <!--<option value="1">Expressions</option>-->
+            <option value="2">Functions</option>
+         </select>
+
+           <div id="generated">
+		       <span id="one-toggle-span"><input type="checkbox" class="changeItem" data-toggle="toggle" data-on="Mixed" data-off="One Solution" id="one-toggle" name="one-toggle" data-offstyle="btn btn-main btn-toggle btn-lg" data-onstyle="btn btn-info btn-toggle btn-lg"></span>   
             <input type="button" value="Generate" id="generate" class="btn btn-main btn-lg">
           <div id="generatedEquation"></div>  	        
 
